@@ -29,7 +29,7 @@ NumericVector center(NumericMatrix raw_data, bool standard = false) {
   for(size_t i = 0; i < p; i++){
     l2norm[i] = sqrt(sum(pow(centered_data(_,i),2)));
     if(l2norm[i] == 0){
-      stop("\n KDGN: Variable " + toString(i+1) + " has zero variance. \n Please remove that.");
+      stop("\n DKGN: Variable " + toString(i+1) + " has zero variance. \n Please remove that.");
     }
     standandard_data(_,i) = centered_data(_,i) / l2norm[i] * sqrt(n);
   }

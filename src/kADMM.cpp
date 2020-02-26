@@ -37,7 +37,7 @@ arma::mat kADMM(arma::mat& Sigma, const double gammav, const double rho, int max
   double pgammav;
 
   for (int k = 0;k < max_iter;k++){
-    cout << "KDGN : (ADMM) Iteration " << k+1 << " of " << max_iter << " is running. \n";
+    cout << "DKGN : (ADMM) Iteration " << k+1 << " of " << max_iter << " is running. \n";
 
     //Theta step
     eig_sym(es,Q,rho*(Z-U)-Sigma);
@@ -76,6 +76,6 @@ arma::mat kADMM(arma::mat& Sigma, const double gammav, const double rho, int max
       break;
     }
   }
-  cout << "KDGN: Precision matrix is returned.\n";
+  cout << "DKGN: Precision matrix is returned.\n";
   return (Theta);
 }

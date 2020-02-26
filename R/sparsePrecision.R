@@ -27,36 +27,36 @@ sparsePrecision <-
 
 
     if (dim(S)[1] != dim(S)[2]) {
-      stop("KDGN : S must be square matrix. ")
+      stop("DKGN : S must be square matrix. ")
     }
     if (!is.numeric(S)) {
-      stop("KDGN : S must be numeric. ")
+      stop("DKGN : S must be numeric. ")
     }
     if (any(is.na(S)) || any(is.nan(S))) {
-      stop("KDGN: S contains missing values. ")
+      stop("DKGN: S contains missing values. ")
     }
     if (numTF > dim(S)[1]) {
-      stop("KDGN : Number of trancription factor must be lower than the number of genes. ")
+      stop("DKGN : Number of trancription factor must be lower than the number of genes. ")
     }
     if (!is.numeric(numTF)) {
-      stop("KDGN : numTF must be numeric. ")
+      stop("DKGN : numTF must be numeric. ")
     }
     if (confidence > 1) {
-      stop("KDGN : Confidence must be lower than 1. ")
+      stop("DKGN : Confidence must be lower than 1. ")
     }
     p_type = match.arg(type)
     if(p_type == "knowledge-based"){
       if (dim(prior)[1] != dim(prior)[2]) {
-        stop("KDGN : prior must be square matrix. ")
+        stop("DKGN : prior must be square matrix. ")
       }
       if (!is.numeric(prior)) {
-        stop("KDGN : prior must be numeric. ")
+        stop("DKGN : prior must be numeric. ")
       }
       if (any(is.na(prior)) || any(is.nan(prior))) {
-        stop("KDGN: prior contains missing values. ")
+        stop("DKGN: prior contains missing values. ")
       }
       if(is.null(prior)){
-        stop("KDGN : Prior target must be determinded. ")
+        stop("DKGN : Prior target must be determinded. ")
       }
     }
     diagS = (diag(S))

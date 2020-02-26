@@ -12,13 +12,13 @@ getTarget <- function(S,
                       type = c("mean", "identity", "variance", "prior"),
                       prior = NULL) {
   if (dim(S)[1] != dim(S)[2]) {
-    stop("KDGN : S must be square matrix. ")
+    stop("DKGN : S must be square matrix. ")
   }
   if (!is.numeric(S)) {
-    stop("KDGN : S must be numeric. ")
+    stop("DKGN : S must be numeric. ")
   }
   if (any(is.na(S)) || any(is.nan(S))) {
-    stop("KDGN: S contains missing values. ")
+    stop("DKGN: S contains missing values. ")
   }
 
   sh_type = match.arg(type)
@@ -46,11 +46,11 @@ getTarget <- function(S,
     for (i in 1:dim(prior)[1]) {
       node1 = prior[i, 1]
       if (!is.element(node1, row.names(S))) {
-        stop("KDGN: Gene name not found. ")
+        stop("DKGN: Gene name not found. ")
       }
       node2 = prior[i, 2]
       if (!is.element(node2, row.names(S))) {
-        stop("KDGN: Gene name not found. ")
+        stop("DKGN: Gene name not found. ")
       }
       prior_one[node1, node2] = 1
       prior_one[node2, node1] = 1
