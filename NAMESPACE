@@ -1,0 +1,3 @@
+useDynLib(DKGN, .registration=TRUE)
+importFrom(Rcpp, evalCpp)
+exportPattern("^[[:alpha:]]+")
