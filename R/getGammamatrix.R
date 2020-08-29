@@ -25,17 +25,20 @@ getGammamatrix <-
     if (!is.numeric(confidence)) {
       stop("DKGN : confidence should be numeric. ")
     }
-
-    if (dim(prior)[1] != dim(prior)[2]) {
-      stop("DKGN : Prior matrix must be square matrix. ")
+    if(!is.null(prior)){
+      if (dim(prior)[1] != dim(prior)[2]) {
+        stop("DKGN : Prior matrix must be square matrix. ")
+      }
+      if (!is.numeric(prior)) {
+        stop("DKGN : Prior must be numeric. ")
+      }
+      if (any(is.na(prior)) || any(is.nan(prior))) {
+        stop("DKGN: Prior matrix contains missing values. ")
+      }
     }
-    if (!is.numeric(prior)) {
-      stop("DKGN : Prior must be numeric. ")
+    if(is.null(prior)){
+      prior = matrix(data = 1, nrow = nrow(S), ncol = ncol(S))
     }
-    if (any(is.na(prior)) || any(is.nan(prior))) {
-      stop("DKGN: Prior matrix contains missing values. ")
-    }
-
     diagS = (diag(S))
     SS = outer(diagS, diagS)
     maxSS = max(SS)
