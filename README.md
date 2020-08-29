@@ -28,15 +28,15 @@ p = ncol(Network1)
 S = t(Network1) %*% Network1 / n
 target = getTarget(S = S, type = "mean")
 sigma_hat = shrinkCovariance(S, target = target, n = n, lambda = seq(0.01, 0.99, 0.01))
+gamma = getGammamatrix(sigma_hat,confidence=0.95)
 omega_hat = sparsePrecision(
   sigma_hat,
   n,
   TFnum,
+  gamma = gamma,
   rho = 1.0,
-  confidence = 0.95,
   max_iter = 100,
   tol = 1e-10,
-  type = "data-driven"
 )
 partialcorr = pCorr(precision = omega_hat)
 colnames(partialcorr) = rownames(partialcorr) = rownames(S)
@@ -70,16 +70,17 @@ sigma_hat = shrinkCovariance(S,
                              target = target,
                              n = n,
                              lambda = seq(0.01, 0.99, 0.01))
+diag(target) = target[target == 0] = 1
+target[target!=1] = 0
+gamma = getGammamatrix(sigma_hat, confidence = 0.95, prior = target)
 omega_hat = sparsePrecision(
   sigma_hat,
   n,
   TFnum,
+  gamma,
   rho = 1.0,
-  confidence = 0.95,
   max_iter = 100,
   tol = 1e-10,
-  type = "knowledge-based",
-  prior = target
 )
 partialcorr = pCorr(precision = omega_hat)
 colnames(partialcorr) = rownames(partialcorr) = rownames(S)
@@ -111,15 +112,15 @@ sigma_hat = shrinkCovariance(S,
                              target = target,
                              n = n,
                              lambda = seq(0.01, 0.99, 0.01))
+gamma = getGammamatrix(sigma_hat, confidence=0.95)
 omega_hat = sparsePrecision(
   sigma_hat,
   n,
   p,
+  gamma = gamma,
   rho = 1.0,
-  confidence = 0.95,
   max_iter = 200,
   tol = 1e-10,
-  type = "data-driven"
 )
 partialcorr = pCorr(precision = omega_hat)
 colnames(partialcorr) = rownames(partialcorr) = rownames(S)
@@ -143,21 +144,22 @@ p = ncol(Network4)
 S = t(Network4) %*% Network4 / n
 prior =
   Network4_gold[sample(nrow(Network4_gold), floor(percentage * dim(Network4_gold)[1])), c(1, 2)]
-target = getTarget(S = S, type = "prior",prior)
+target = getTarget(S = S, type = "prior", prior)
 sigma_hat = shrinkCovariance(S,
                              target = target,
                              n = n,
                              lambda = seq(0.01, 0.99, 0.01))
+diag(target) = target[target == 0] = 1
+target[target != 1] = 0
+gamma = getGammamatrix(sigma_hat, confidence = 0.95, prior = target)
 omega_hat = sparsePrecision(
   sigma_hat,
   n,
   p,
+  gamma = gamma,
   rho = 1.0,
-  confidence = 0.95,
   max_iter = 200,
   tol = 1e-10,
-  type = "knowledge-based",
-  prior = target
 )
 partialcorr = pCorr(precision = omega_hat)
 colnames(partialcorr) = rownames(partialcorr) = rownames(S)
@@ -168,6 +170,73 @@ fdrout = fdrtool(network$partialcorr,statistic = "correlation",plot =FALSE)
 network$q_values = fdrout$qval
 network = network[network$q_values<=0.01,]
 ```
+
+
+## Scenario 3 ##
+
+Knowledge-based (PM+Z) algorithm on Network4 when 60% of edges in the prior are true and 40% false
+
+
+```
+set.seed(100)
+data = Network4
+n = nrow(data)
+p = ncol(data)
+S = t(data) %*% data / n
+x = 0.6
+genenames = colnames(Network4)
+rownames(S) = colnames(S) = genenames
+string = data.frame(Network4_gold)
+gold <- data.frame(string$X1,string$X2,1)
+gold_matrix <- matrix(data = 0,nrow = p, ncol = p)
+rownames(gold_matrix) <- genenames
+colnames(gold_matrix) <- genenames
+for(i in 1:length(string$X1)){
+  tmp <- gold[i,]
+  tmp<-as.matrix(tmp)
+  gold_matrix[tmp[1,1],tmp[1,2]] <- 1
+  gold_matrix[tmp[1,2],tmp[1,1]] <- 1
+}
+diag(gold_matrix) <- 0
+graph = gold_matrix
+true.mat = graph
+p.mat <- true.mat
+p.mat[] <- 1
+t.edge   <- which(true.mat == 1)
+t.unedge <- which(true.mat == 0)
+p.edge <- sample(t.edge, size=length(t.edge) * x)
+p.edge <- sort(c(p.edge, sample(t.unedge,
+                                size=length(t.edge) * (1-x))))
+p.mat[p.edge] <- runif(length(p.edge), min=0, max=(1-x))
+p.mat[p.mat==1] <- runif(length(t.unedge), min=x, max=1)
+p.mat<-as.matrix(forceSymmetric(p.mat))
+diag(p.mat) <- 1
+prior_knowledge = p.mat
+target = getTarget(S = S, type = "mean")
+sigma_hat = shrinkCovariance(S, target = target, n = n,
+                             lambda = seq(0.01, 0.99, 0.01))
+gamma = getGammamatrix(S= sigma_hat, confidence = 0.95
+                       , prior = prior_knowledge)
+
+omega_hat = sparsePrecision(
+  sigma_hat,
+  n,
+  p,
+  gamma = gamma,
+  rho = 1,
+  max_iter = 200,
+  tol = 1e-10
+)
+partialcorr = pCorr(precision = omega_hat)
+colnames(partialcorr) = rownames(partialcorr) = rownames(S)
+partialcorr[lower.tri(partialcorr, diag = TRUE)] = NA
+network = na.omit(data.frame(as.table(partialcorr)))
+colnames(network) = c("node1", "node2", "partialcorr")
+fdrout = fdrtool(network$partialcorr,statistic = "correlation",plot =FALSE)
+network$q_values = fdrout$qval
+network = network[network$q_values <=0.01,]
+```
+
 
 # Authors
 
