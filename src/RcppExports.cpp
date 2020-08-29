@@ -6,6 +6,22 @@
 
 using namespace Rcpp;
 
+// ADMM
+arma::mat ADMM(arma::mat& Sigma, arma::mat& gammav, const double rho, int max_iter, const double tol, int numvariable);
+RcppExport SEXP _DKGN_ADMM(SEXP SigmaSEXP, SEXP gammavSEXP, SEXP rhoSEXP, SEXP max_iterSEXP, SEXP tolSEXP, SEXP numvariableSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat& >::type Sigma(SigmaSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type gammav(gammavSEXP);
+    Rcpp::traits::input_parameter< const double >::type rho(rhoSEXP);
+    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
+    Rcpp::traits::input_parameter< const double >::type tol(tolSEXP);
+    Rcpp::traits::input_parameter< int >::type numvariable(numvariableSEXP);
+    rcpp_result_gen = Rcpp::wrap(ADMM(Sigma, gammav, rho, max_iter, tol, numvariable));
+    return rcpp_result_gen;
+END_RCPP
+}
 // center
 NumericVector center(NumericMatrix raw_data, bool standard);
 RcppExport SEXP _DKGN_center(SEXP raw_dataSEXP, SEXP standardSEXP) {
@@ -15,22 +31,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericMatrix >::type raw_data(raw_dataSEXP);
     Rcpp::traits::input_parameter< bool >::type standard(standardSEXP);
     rcpp_result_gen = Rcpp::wrap(center(raw_data, standard));
-    return rcpp_result_gen;
-END_RCPP
-}
-// dADMM
-arma::mat dADMM(arma::mat& Sigma, const double gammav, const double rho, const double tol, int max_iter, int numvariable);
-RcppExport SEXP _DKGN_dADMM(SEXP SigmaSEXP, SEXP gammavSEXP, SEXP rhoSEXP, SEXP tolSEXP, SEXP max_iterSEXP, SEXP numvariableSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat& >::type Sigma(SigmaSEXP);
-    Rcpp::traits::input_parameter< const double >::type gammav(gammavSEXP);
-    Rcpp::traits::input_parameter< const double >::type rho(rhoSEXP);
-    Rcpp::traits::input_parameter< const double >::type tol(tolSEXP);
-    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
-    Rcpp::traits::input_parameter< int >::type numvariable(numvariableSEXP);
-    rcpp_result_gen = Rcpp::wrap(dADMM(Sigma, gammav, rho, tol, max_iter, numvariable));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -48,23 +48,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// kADMM
-arma::mat kADMM(arma::mat& Sigma, const double gammav, const double rho, int max_iter, const double tol, int numvariable, arma::mat& prior);
-RcppExport SEXP _DKGN_kADMM(SEXP SigmaSEXP, SEXP gammavSEXP, SEXP rhoSEXP, SEXP max_iterSEXP, SEXP tolSEXP, SEXP numvariableSEXP, SEXP priorSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat& >::type Sigma(SigmaSEXP);
-    Rcpp::traits::input_parameter< const double >::type gammav(gammavSEXP);
-    Rcpp::traits::input_parameter< const double >::type rho(rhoSEXP);
-    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
-    Rcpp::traits::input_parameter< const double >::type tol(tolSEXP);
-    Rcpp::traits::input_parameter< int >::type numvariable(numvariableSEXP);
-    Rcpp::traits::input_parameter< arma::mat& >::type prior(priorSEXP);
-    rcpp_result_gen = Rcpp::wrap(kADMM(Sigma, gammav, rho, max_iter, tol, numvariable, prior));
-    return rcpp_result_gen;
-END_RCPP
-}
 // pCorr
 NumericMatrix pCorr(NumericMatrix precision);
 RcppExport SEXP _DKGN_pCorr(SEXP precisionSEXP) {
@@ -78,10 +61,9 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_DKGN_ADMM", (DL_FUNC) &_DKGN_ADMM, 6},
     {"_DKGN_center", (DL_FUNC) &_DKGN_center, 2},
-    {"_DKGN_dADMM", (DL_FUNC) &_DKGN_dADMM, 6},
     {"_DKGN_getIntensity", (DL_FUNC) &_DKGN_getIntensity, 4},
-    {"_DKGN_kADMM", (DL_FUNC) &_DKGN_kADMM, 7},
     {"_DKGN_pCorr", (DL_FUNC) &_DKGN_pCorr, 1},
     {NULL, NULL, 0}
 };

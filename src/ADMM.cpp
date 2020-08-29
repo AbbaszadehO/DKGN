@@ -1,11 +1,10 @@
 //' ADMM algorithm for estimating sparse precision matrix based on prior knowledge
-//' @name kADMM
+//' @name ADMM
 //' @param Sigma Covariance matrix.
 //' @param gammav Regularization term.
 //' @param rho Penalty parameter of the augmented Lagrangian function.
 //' @param max_iter Maximum number of the iterations.
 //' @param numvariable Number of the variables (e.g., Transcription factors)
-//' @param prior A zero-one matrix that denotes available prior knowledge
 //'
 //' @return A Sparse precision matrix
 //' @export
@@ -16,7 +15,7 @@ using namespace Rcpp;
 using namespace arma;
 // [[Rcpp::depends(RcppArmadillo)]]
 // [[Rcpp::export]]
-arma::mat kADMM(arma::mat& Sigma, const double gammav, const double rho, int max_iter, const double tol, int numvariable, arma::mat& prior){
+arma::mat ADMM(arma::mat& Sigma, arma::mat& gammav, const double rho, int max_iter, const double tol, int numvariable){
 
   const int abstol = static_cast<double>(2) * tol;
   const int p = Sigma.n_cols;
@@ -51,8 +50,7 @@ arma::mat kADMM(arma::mat& Sigma, const double gammav, const double rho, int max
       for (int j=0;j<p;j++){
         double soft1 = 0;
         double soft2 = 0;
-        if(prior(i,j)!=0) {pgammav = 0;}
-        else{pgammav = gammav/rho; }
+        pgammav = gammav(i,j)/rho;
         if (Theta(i,j)+U(i,j) > pgammav){soft1 = Theta(i,j) + U(i,j) - pgammav;}
         if (Theta(i,j)+U(i,j) < -pgammav){soft2 = -(Theta(i,j) + U(i,j)) - pgammav;}
         Z(i,j) = soft1 - soft2;

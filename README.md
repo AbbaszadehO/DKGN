@@ -28,15 +28,15 @@ p = ncol(Network1)
 S = t(Network1) %*% Network1 / n
 target = getTarget(S = S, type = "mean")
 sigma_hat = shrinkCovariance(S, target = target, n = n, lambda = seq(0.01, 0.99, 0.01))
+gamma = getGammamatrix(sigma_hat,confidence=0.95)
 omega_hat = sparsePrecision(
   sigma_hat,
   n,
   TFnum,
+  gamma = gamma,
   rho = 1.0,
-  confidence = 0.95,
   max_iter = 100,
   tol = 1e-10,
-  type = "data-driven"
 )
 partialcorr = pCorr(precision = omega_hat)
 colnames(partialcorr) = rownames(partialcorr) = rownames(S)
@@ -70,16 +70,17 @@ sigma_hat = shrinkCovariance(S,
                              target = target,
                              n = n,
                              lambda = seq(0.01, 0.99, 0.01))
+diag(target) = target[target == 0] = 1
+target[target!=1] = 0
+gamma = getGammamatrix(sigma_hat, confidence = 0.95, prior = target)
 omega_hat = sparsePrecision(
   sigma_hat,
   n,
   TFnum,
+  gamma,
   rho = 1.0,
-  confidence = 0.95,
   max_iter = 100,
   tol = 1e-10,
-  type = "knowledge-based",
-  prior = target
 )
 partialcorr = pCorr(precision = omega_hat)
 colnames(partialcorr) = rownames(partialcorr) = rownames(S)
@@ -111,15 +112,15 @@ sigma_hat = shrinkCovariance(S,
                              target = target,
                              n = n,
                              lambda = seq(0.01, 0.99, 0.01))
+gamma = getGammamatrix(sigma_hat, confidence=0.95)
 omega_hat = sparsePrecision(
   sigma_hat,
   n,
   p,
+  gamma = gamma,
   rho = 1.0,
-  confidence = 0.95,
   max_iter = 200,
   tol = 1e-10,
-  type = "data-driven"
 )
 partialcorr = pCorr(precision = omega_hat)
 colnames(partialcorr) = rownames(partialcorr) = rownames(S)
@@ -143,21 +144,22 @@ p = ncol(Network4)
 S = t(Network4) %*% Network4 / n
 prior =
   Network4_gold[sample(nrow(Network4_gold), floor(percentage * dim(Network4_gold)[1])), c(1, 2)]
-target = getTarget(S = S, type = "prior",prior)
+target = getTarget(S = S, type = "prior", prior)
 sigma_hat = shrinkCovariance(S,
                              target = target,
                              n = n,
                              lambda = seq(0.01, 0.99, 0.01))
+diag(target) = target[target == 0] = 1
+target[target != 1] = 0
+gamma = getGammamatrix(sigma_hat, confidence = 0.95, prior = target)
 omega_hat = sparsePrecision(
   sigma_hat,
   n,
   p,
+  gamma = gamma,
   rho = 1.0,
-  confidence = 0.95,
   max_iter = 200,
   tol = 1e-10,
-  type = "knowledge-based",
-  prior = target
 )
 partialcorr = pCorr(precision = omega_hat)
 colnames(partialcorr) = rownames(partialcorr) = rownames(S)
