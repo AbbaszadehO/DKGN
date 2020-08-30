@@ -1,8 +1,8 @@
 #' L1 regularization to estimate sparse precision matrix
 #'
 #' @param S Covariance Matrix
-#' @param n Number of the samples
 #' @param numTF Number of the Transcription Factors
+#' @param gamma_matrix Gamma matrix for L1 regularization
 #' @param max_iter Maximum number of iteration in the ADMM algorithm
 #' @param rho Penalty parameter of the augmented Lagrangian function
 #' @param tol The tolerance for the optimization
@@ -13,9 +13,8 @@
 
 sparsePrecision <-
   function(S,
-           n,
            numTF,
-           gamma,
+           gamma_matrix,
            rho,
            max_iter,
            tol
@@ -37,13 +36,13 @@ sparsePrecision <-
     if (!is.numeric(numTF)) {
       stop("DKGN : numTF must be numeric. ")
     }
-    if (!is.numeric(gamma)) {
-      stop("DKGN : gamma should be numeric. ")
+    if (!is.numeric(gamma_matrix)) {
+      stop("DKGN : Gamma matrix should be numeric. ")
     }
-    if (dim(gamma)[1] != dim(gamma)[2]) {
-      stop("DKGN : gamma matrix must be square matrix. ")
+    if (dim(gamma_matrix)[1] != dim(gamma_matrix)[2]) {
+      stop("DKGN : Gamma matrix matrix must be square matrix. ")
     }
-    Chat = ADMM(S, gamma, rho, max_iter = max_iter, tol, numvariable = numTF)
+    Chat = ADMM(S, gamma_matrix, rho, max_iter = max_iter, tol, numvariable = numTF)
     precision = matrix(Chat, nrow = nrow(S))
     return(precision)
   }

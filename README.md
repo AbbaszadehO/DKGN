@@ -28,15 +28,14 @@ p = ncol(Network1)
 S = t(Network1) %*% Network1 / n
 target = getTarget(S = S, type = "mean")
 sigma_hat = shrinkCovariance(S, target = target, n = n, lambda = seq(0.01, 0.99, 0.01))
-gamma = getGammamatrix(sigma_hat,confidence=0.95)
+gamma_matrix = getGammamatrix(sigma_hat,confidence=0.95)
 omega_hat = sparsePrecision(
-  sigma_hat,
-  n,
-  TFnum,
-  gamma = gamma,
+  S = sigma_hat,
+  numTF = TFnum,
+  gamma_matrix = gamma_matrix,
   rho = 1.0,
   max_iter = 100,
-  tol = 1e-10,
+  tol = 1e-10
 )
 partialcorr = pCorr(precision = omega_hat)
 colnames(partialcorr) = rownames(partialcorr) = rownames(S)
@@ -74,13 +73,12 @@ diag(target) = target[target == 0] = 1
 target[target!=1] = 0
 gamma = getGammamatrix(sigma_hat, confidence = 0.95, prior = target)
 omega_hat = sparsePrecision(
-  sigma_hat,
-  n,
-  TFnum,
-  gamma,
+  S = sigma_hat,
+  numTF = TFnum,
+  gamma_matrix = gamma_matrix,
   rho = 1.0,
   max_iter = 100,
-  tol = 1e-10,
+  tol = 1e-10
 )
 partialcorr = pCorr(precision = omega_hat)
 colnames(partialcorr) = rownames(partialcorr) = rownames(S)
@@ -112,15 +110,14 @@ sigma_hat = shrinkCovariance(S,
                              target = target,
                              n = n,
                              lambda = seq(0.01, 0.99, 0.01))
-gamma = getGammamatrix(sigma_hat, confidence=0.95)
+gamma_matrix = getGammamatrix(sigma_hat, confidence=0.95)
 omega_hat = sparsePrecision(
-  sigma_hat,
-  n,
-  p,
-  gamma = gamma,
+  S = sigma_hat,
+  numTF = p,
+  gamma_matrix = gamma_matrix,
   rho = 1.0,
   max_iter = 200,
-  tol = 1e-10,
+  tol = 1e-10
 )
 partialcorr = pCorr(precision = omega_hat)
 colnames(partialcorr) = rownames(partialcorr) = rownames(S)
@@ -153,10 +150,9 @@ diag(target) = target[target == 0] = 1
 target[target != 1] = 0
 gamma = getGammamatrix(sigma_hat, confidence = 0.95, prior = target)
 omega_hat = sparsePrecision(
-  sigma_hat,
-  n,
-  p,
-  gamma = gamma,
+  S = sigma_hat,
+  numTF = p,
+  gamma_matrix = gamma_matrix,
   rho = 1.0,
   max_iter = 200,
   tol = 1e-10,
@@ -215,13 +211,12 @@ prior_knowledge = p.mat
 target = getTarget(S = S, type = "mean")
 sigma_hat = shrinkCovariance(S, target = target, n = n,
                              lambda = seq(0.01, 0.99, 0.01))
-gamma = getGammamatrix(S = sigma_hat, confidence = 0.95,
+gamma_matrix = getGammamatrix(S = sigma_hat, confidence = 0.95,
                        prior = prior_knowledge)
 omega_hat = sparsePrecision(
-  sigma_hat,
-  n,
-  p,
-  gamma = gamma,
+  S = sigma_hat,
+  numTF = p,
+  gamma_matrix = gamma_matrix,
   rho = 1,
   max_iter = 200,
   tol = 1e-10
