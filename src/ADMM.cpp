@@ -1,7 +1,7 @@
 //' ADMM algorithm for estimating sparse precision matrix based on prior knowledge
 //' @name ADMM
 //' @param Sigma Covariance matrix.
-//' @param gammav Regularization term.
+//' @param gammav L1 Regularization term matrix.
 //' @param rho Penalty parameter of the augmented Lagrangian function.
 //' @param max_iter Maximum number of the iterations.
 //' @param numvariable Number of the variables (e.g., Transcription factors)

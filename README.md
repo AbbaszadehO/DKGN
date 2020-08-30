@@ -155,7 +155,7 @@ omega_hat = sparsePrecision(
   gamma_matrix = gamma_matrix,
   rho = 1.0,
   max_iter = 200,
-  tol = 1e-10,
+  tol = 1e-10
 )
 partialcorr = pCorr(precision = omega_hat)
 colnames(partialcorr) = rownames(partialcorr) = rownames(S)
