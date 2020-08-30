@@ -6,6 +6,7 @@ An R implementation (dev version)
 * [Rcpp](https://cran.r-project.org/web/packages/Rcpp/index.html) (>=1.0.2).
 * [RcppArmadillo](https://cran.r-project.org/web/packages/RcppArmadillo/RcppArmadillo.pdf) (>=0.9.800.1.0).
 * [fdrtool](https://cran.r-project.org/web/packages/fdrtool/index.html) (>=1.2.15).
+* [glmnet](https://cran.r-project.org/web/packages/glmnet/index.html) (>=4.0.2)
 
 # Installing
 This version can be directly installed from the R console using:
@@ -71,7 +72,7 @@ sigma_hat = shrinkCovariance(S,
                              lambda = seq(0.01, 0.99, 0.01))
 diag(target) = target[target == 0] = 1
 target[target!=1] = 0
-gamma = getGammamatrix(sigma_hat, confidence = 0.95, prior = target)
+gamma_matrix = getGammamatrix(sigma_hat, confidence = 0.95, prior = target)
 omega_hat = sparsePrecision(
   S = sigma_hat,
   numTF = TFnum,
@@ -174,6 +175,9 @@ Knowledge-based (PM+Z) algorithm on Network4 when 60% of edges in the prior are 
 
 
 ```
+library(DKGN)
+library(fdrtool)
+library(glmnet)
 set.seed(100)
 data = Network4
 n = nrow(data)
