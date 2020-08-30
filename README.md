@@ -148,7 +148,7 @@ sigma_hat = shrinkCovariance(S,
                              lambda = seq(0.01, 0.99, 0.01))
 diag(target) = target[target == 0] = 1
 target[target != 1] = 0
-gamma = getGammamatrix(sigma_hat, confidence = 0.95, prior = target)
+gamma_matrix = getGammamatrix(sigma_hat, confidence = 0.95, prior = target)
 omega_hat = sparsePrecision(
   S = sigma_hat,
   numTF = p,
