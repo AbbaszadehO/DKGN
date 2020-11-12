@@ -245,9 +245,9 @@ network = network[network$q_values <=0.01,]
 
 # Reference
 
-* [R (3.6.x)](https://ieeexplore.ieee.org/abstract/document/9244641) (R 3.6.1 is recommended).
-
 * Abbaszadeh, Omid, et al. "Data-driven and Knowledge-based Algorithms for Gene Network Reconstruction on High-dimensional Data." IEEE/ACM Transactions on Computational Biology and Bioinformatics (2020). 
+
+* [link](https://ieeexplore.ieee.org/abstract/document/9244641) (R 3.6.1 is recommended).
 
 # License
 
